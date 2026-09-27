@@ -25,21 +25,21 @@
 inline void printHelp() {
 
     Serial.println();
-    Serial.println("=== CONTROL DE EXPRESIONES ===");
-    Serial.println("1 - Expresion 1");
-    Serial.println("2 - Expresion 2");
-    Serial.println("3 - Expresion 3");
-    Serial.println("4 - Expresion 4");
-    Serial.println("5 - Expresion 5");
-    Serial.println("6 - Expresion 6");
-    Serial.println("7 - Expresion 7");
-    Serial.println("h - Mostrar ayuda");
-    Serial.println("===============================");
+    Serial.println(F("=== CONTROL DE EXPRESIONES ==="));
+    Serial.println(F("1 - Expresion 1"));
+    Serial.println(F("2 - Expresion 2"));
+    Serial.println(F("3 - Expresion 3"));
+    Serial.println(F("4 - Expresion 4"));
+    Serial.println(F("5 - Expresion 5"));
+    Serial.println(F("6 - Expresion 6"));
+    Serial.println(F("7 - Expresion 7"));
+    Serial.println(F("h - Mostrar ayuda"));
+    Serial.println(F("==============================="));
     Serial.println();
 
 }
 
-// CHECK 4.2: Atiende el puerto sin bloquear: una tecla, respuesta inmediata; teclas 1 a 7 cambian la expresión, h repite la ayuda, los caracteres de control se ignoran en silencio.
+// CHECK 4.2: Atiende el puerto sin bloquear: una tecla, respuesta inmediata; teclas 1 a 7 cambian la expresion, h repite la ayuda, los caracteres de control se ignoran en silencio.
 
 // Pregunta Guía: ¿Qué pasa con una tecla desconocida y qué pasa con un carácter de control?
 
@@ -51,14 +51,17 @@ inline void debugSerialTick() {
 
     char command = Serial.read();
 
+    // Ignorar caracteres de control como Enter, salto de línea, etc.
     if (command < 32) {
         return;
     }
 
+    // Teclas 1 a 7 cambian la expresión.
     if (command >= '1' && command <= '7') {
-        int expression = command - '1';
-        setExpression(expression);
+        setEyesMood(command);
     }
+
+    // h o H muestran nuevamente la ayuda.
     else if (command == 'h' || command == 'H') {
         printHelp();
     }
