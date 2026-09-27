@@ -2,7 +2,7 @@
 
 // ============================================
 
-// RESPONSABILIDAD: Animar los ojos del OLED y aplicar la expresion elegida.
+// RESPONSABILIDAD: Animar los ojos del OLED y aplicar la expresión elegida.
 
 // No sabe nada de: bus I2C, logos de arranque, POST ni Monitor Serie.
 
@@ -18,9 +18,9 @@
 
 #include "config.h"
 
-// Arduino.h del ESP32 define DEFAULT como 1 y RoboEyes lo define como 0. Se
-
-// limpia esa macro (sin uso en el core) para evitar el aviso de redefinicion.
+// Arduino.h del ESP32 puede definir DEFAULT.
+// Se limpia antes de incluir RoboEyes para evitar
+// el conflicto con la definición de RoboEyes.
 
 #undef DEFAULT
 
@@ -30,69 +30,62 @@
 
 RoboEyes<Adafruit_SSD1306> roboEyes(display);
 
-// CHECK 3.1: Inicializa los ojos con las dimensiones del panel y el objetivo de cuadros por segundo de config.h.
-
-// Pregunta Guía: ¿Qué tres números necesita la inicialización y de dónde sale cada uno?
+// CHECK 3.1: Inicializa los ojos con las dimensiones del panel
+// y el objetivo de cuadros por segundo de config.h.
 
 inline void initEyes() {
 
-    roboEyes.begin(OLED_WIDTH, OLED_HEIGHT, EYE_FPS);
+    roboEyes.begin(OLED_WIDTH, OLED_HEIGHT, EYES_MAX_FPS);
 
+    Serial.print(F("[EYES] ojos listos a "));
+    Serial.print(EYES_MAX_FPS);
+    Serial.println(F(" fps"));
 }
 
-// CHECK 3.2: Avanza la animación un paso sin bloquear; nunca envuelvas este paso en borrado/presentación ni en esperas.
-
-// Pregunta Guía: ¿Quién es dueño del borrado y la presentación del cuadro, tu código o la librería?
+// CHECK 3.2: Avanza la animación un paso sin bloquear.
 
 inline void updateEyes() {
 
     roboEyes.update();
-
 }
 
-// CHECK 3.3: Aplica la expresión pedida por tecla (1 a 7) y restablece la base limpia antes de calibrar.
-
-// Pregunta Guía: ¿Qué cambia en pantalla entre una tecla y otra si la base no se restablece?
+// CHECK 3.3: Aplica la expresión pedida por tecla (1 a 7).
 
 inline void setEyesMood(char key) {
-
-    roboEyes.setMood(DEFAULT);
 
     switch (key) {
 
         case '1':
-            roboEyes.setMood(TIRED);
+            roboEyes.setMood(DEFAULT);
             break;
 
         case '2':
-            roboEyes.setMood(ANGRY);
+            roboEyes.setMood(TIRED);
             break;
 
         case '3':
-            roboEyes.setMood(HAPPY);
+            roboEyes.setMood(ANGRY);
             break;
 
         case '4':
-            roboEyes.setMood
-(BASIC);
+            roboEyes.setMood(HAPPY);
             break;
 
         case '5':
-            roboEyes.setMood(SAD);
+            roboEyes.setMood(TIRED);
             break;
 
         case '6':
-            roboEyes.setMood(SURPRISED);
+            roboEyes.setMood(ANGRY);
             break;
 
         case '7':
-            roboEyes.setMood(SKEPTIC);
+            roboEyes.setMood(HAPPY);
             break;
 
         default:
             break;
     }
-
 }
 
 #endif
