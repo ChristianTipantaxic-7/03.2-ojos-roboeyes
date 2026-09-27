@@ -1,26 +1,68 @@
 // debug_serial.h
+
 // ============================================
+
 // RESPONSABILIDAD: Leer comandos del Monitor Serie y mostrar la ayuda.
+
 // No sabe nada de: bus I2C, OLED, logos ni animacion interna de los ojos.
+
 // ============================================
 
 #ifndef DEBUG_SERIAL_H
+
 #define DEBUG_SERIAL_H
 
 #include <Arduino.h>
+
 #include "config.h"
+
 #include "eyes.h"
 
-// TODO 4.1: Publica el bloque de ayuda con las 7 expresiones y la tecla de ayuda.
+// CHECK 4.1: Publica el bloque de ayuda con las 7 expresiones y la tecla de ayuda.
+
 // Pregunta Guía: ¿Qué debe ver un compañero que abre el monitor por primera vez?
+
 inline void printHelp() {
-    /* ESCRIBE TU CÓDIGO AQUÍ */
+
+    Serial.println();
+    Serial.println("=== CONTROL DE EXPRESIONES ===");
+    Serial.println("1 - Expresion 1");
+    Serial.println("2 - Expresion 2");
+    Serial.println("3 - Expresion 3");
+    Serial.println("4 - Expresion 4");
+    Serial.println("5 - Expresion 5");
+    Serial.println("6 - Expresion 6");
+    Serial.println("7 - Expresion 7");
+    Serial.println("h - Mostrar ayuda");
+    Serial.println("===============================");
+    Serial.println();
+
 }
 
-// TODO 4.2: Atiende el puerto sin bloquear: una tecla, respuesta inmediata; teclas 1 a 7 cambian la expresión, h repite la ayuda, los caracteres de control se ignoran en silencio.
+// CHECK 4.2: Atiende el puerto sin bloquear: una tecla, respuesta inmediata; teclas 1 a 7 cambian la expresión, h repite la ayuda, los caracteres de control se ignoran en silencio.
+
 // Pregunta Guía: ¿Qué pasa con una tecla desconocida y qué pasa con un carácter de control?
+
 inline void debugSerialTick() {
-    /* ESCRIBE TU CÓDIGO AQUÍ */
+
+    if (!Serial.available()) {
+        return;
+    }
+
+    char command = Serial.read();
+
+    if (command < 32) {
+        return;
+    }
+
+    if (command >= '1' && command <= '7') {
+        int expression = command - '1';
+        setExpression(expression);
+    }
+    else if (command == 'h' || command == 'H') {
+        printHelp();
+    }
+
 }
 
 #endif
