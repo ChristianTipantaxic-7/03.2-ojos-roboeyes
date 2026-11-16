@@ -57,10 +57,10 @@ void dibujarFlechaIzquierda() {
 
 // Mostrar flecha o PARE en la OLED
 void mostrarIndicadorMovimiento(Movimiento movimiento) {
+
     static Movimiento ultimoMovimiento = MOV_PARE;
     static bool primeraVez = true;
 
-    // Redibujar solo cuando cambia el movimiento
     if (!primeraVez && movimiento == ultimoMovimiento) {
         return;
     }
@@ -72,6 +72,7 @@ void mostrarIndicadorMovimiento(Movimiento movimiento) {
     display.setTextColor(SSD1306_WHITE);
 
     switch (movimiento) {
+
         case MOV_ADELANTE:
             dibujarFlechaArriba();
             display.setTextSize(1);
@@ -119,18 +120,19 @@ void mostrarIndicadorMovimiento(Movimiento movimiento) {
 }
 
 void setup() {
+
     Serial.begin(115200);
     Serial.println(F("[BOOT] Sistema OLED y motores"));
 
-    // Inicializar motores
+    // Inicializar motores y relés
     initMotors();
 
-    // Inicializar I2C con los pines originales
+    // Inicializar I2C
     initI2C();
     scanI2C();
     testI2CDevice();
 
-    // Inicializar pantalla
+    // Inicializar OLED
     initDisplay();
 
     // Secuencia original de arranque
@@ -143,30 +145,42 @@ void setup() {
     showLogo();
     delay(1000);
 
-    // Inicializar ojos animados
+    // Inicializar RoboEyes
     initEyes();
     printHelp();
 
     bootTime = millis();
+
+    // Preparar primera secuencia
+    pasoMovimiento = -1;
+    tiempoInicioMovimiento = millis();
+    tiempoMovimiento = 0;
 }
 
 void loop() {
-    // Mostrar ojos durante el arranque
+
+    // Fase de arranque
     if (!bootComplete) {
+
         debugSerialTick();
         updateEyes();
 
         if (millis() - bootTime >= LOGO_TIME_MS) {
+
             bootComplete = true;
+
             Serial.println(F("[BOOT] Inicio terminado"));
+
+            detener();
+            mostrarIndicadorMovimiento(MOV_PARE);
         }
 
         return;
     }
 
-    // Ejecutar secuencia de los motores
+    // Ejecutar movimientos
     motorSequenceTick();
 
-    // Mostrar la indicación sin que los ojos la sobrescriban
+    // Actualizar OLED según el movimiento
     mostrarIndicadorMovimiento(obtenerMovimiento());
 }
