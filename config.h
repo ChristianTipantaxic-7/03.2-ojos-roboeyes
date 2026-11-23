@@ -1,11 +1,10 @@
-
 #pragma once
 
 #include <Arduino.h>
 
 // ============================================================================
 // CONFIGURACION GLOBAL DEL PROYECTO
-// ESP32 + OLED + RoboEyes + L293D + RELES
+// ESP32 + OLED + RoboEyes
 // ============================================================================
 
 // --- Bus I2C ---------------------------------------------------------------
@@ -24,27 +23,3 @@
 
 // --- Arranque --------------------------------------------------------------
 #define LOGO_TIME_MS 3000
-
-// --- Motor izquierdo: L293D -----------------------------------------------
-#define MOTOR_IZQ_PWM 32
-#define MOTOR_IZQ_IN1 25
-#define MOTOR_IZQ_IN2 26
-
-// --- Motor derecho: L293D --------------------------------------------------
-#define MOTOR_DER_PWM 33
-#define MOTOR_DER_IN1 27
-#define MOTOR_DER_IN2 14
-
-// --- PWM -------------------------------------------------------------------
-#define PWM_FRECUENCIA 1000
-#define PWM_RESOLUCION 8
-#define VELOCIDAD 180
-
-// --- Relés indicadores -----------------------------------------------------
-#define RELE_ADELANTE 16
-#define RELE_ATRAS 17
-#define RELE_DERECHA 18
-#define RELE_IZQUIERDA 19
-
-// Cambiar a 0 si tus módulos de relé se activan con LOW
-#define RELES_ACTIVOS_HIGH 1

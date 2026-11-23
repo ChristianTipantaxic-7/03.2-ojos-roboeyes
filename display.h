@@ -1,62 +1,80 @@
-// display.h
-
-// ============================================
-
-// RESPONSABILIDAD: Controlar el OLED SSD1306 (inicializacion y texto).
-
-// No sabe nada de: ojos, logos, POST ni comandos del Monitor Serie.
-
-// ============================================
 
 #ifndef DISPLAY_H
-
 #define DISPLAY_H
 
 #include <Arduino.h>
-
 #include <Wire.h>
-
 #include <Adafruit_GFX.h>
-
 #include <Adafruit_SSD1306.h>
 
 #include "config.h"
 
-// Instancia global: el sistema tiene una sola pantalla
+// Crear pantalla OLED
+Adafruit_SSD1306 display(
+    OLED_WIDTH,
+    OLED_HEIGHT,
+    &Wire,
+    OLED_RESET_PIN
+);
 
-Adafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET_PIN);
-
-// CHECK 1.4: Inicializa el panel con el modo de alimentación interna y la dirección de config.h; si falla, informa y no continúes.
-
-// Pregunta Guía: ¿Qué dos argumentos necesita el panel para inicializarse y qué haces si falla?
-
-// Pista: La línea de éxito esperada está en la guía §05.
+// =====================================================
+// INICIALIZAR PANTALLA
+// =====================================================
 
 inline void initDisplay() {
 
-    if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDRESS)) {
-        Serial.println(F("ERROR: No se pudo inicializar el OLED."));
+    if (!display.begin(
+        SSD1306_SWITCHCAPVCC,
+        OLED_I2C_ADDRESS
+    )) {
+
+        Serial.println(F("[OLED] Error al inicializar"));
         return;
     }
 
-    Serial.println(F("OLED inicializado correctamente."));
+    display.clearDisplay();
+    display.display();
 
+    Serial.println(F("[OLED] Inicializada correctamente"));
 }
 
-// Ejemplo de uso de la API del panel: imprime una linea de texto y la presenta.
+// =====================================================
+// MOSTRAR TEXTO
+// =====================================================
 
-inline void showText(const __FlashStringHelper* texto, int x, int y, uint8_t tamano) {
+inline void showText(
+    const __FlashStringHelper* texto,
+    int x,
+    int y,
+    uint8_t tamano
+) {
 
     display.setTextSize(tamano);
-
     display.setTextColor(SSD1306_WHITE);
-
     display.setCursor(x, y);
-
     display.println(texto);
+    display.display();
+}
+
+// =====================================================
+// PROBAR PANTALLA
+// =====================================================
+
+inline void testDisplay() {
+
+    display.clearDisplay();
+
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20, 20);
+
+    display.println(F("NIBO"));
+    display.setCursor(20, 35);
+    display.println(F("OLED FUNCIONANDO"));
 
     display.display();
 
+    Serial.println(F("[OLED] Prueba completada"));
 }
 
 #endif
