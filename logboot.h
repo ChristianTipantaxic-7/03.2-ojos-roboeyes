@@ -1,73 +1,43 @@
-// logboot.h
-
-// ============================================
-
-// RESPONSABILIDAD: Dibujar el logo de arranque y hacer el POST de pantalla.
-
-// No sabe nada de: ojos, bus I2C ni comandos del Monitor Serie.
-
-// ============================================
-
 #ifndef LOGBOOT_H
-
 #define LOGBOOT_H
 
 #include <Arduino.h>
-
 #include "display.h"
-
-#include "logo.h"
-
-// CHECK 2.2: Pinta el marco del logo desde logo_bitmap y preséntalo en el panel.
-
-// Pregunta Guía: ¿Qué debe verse en el panel durante la ventana de arranque?
 
 inline void showLogo() {
 
     display.clearDisplay();
 
-    display.drawBitmap(
-        0,
-        0,
-        logo_bitmap,
-        LOGO_WIDTH,
-        LOGO_HEIGHT,
-        SSD1306_WHITE
-    );
+    // Antena
+    display.drawLine(64, 5, 64, 12, SSD1306_WHITE);
+    display.fillCircle(64, 4, 3, SSD1306_WHITE);
+
+    // Cabeza del robot
+    display.drawRoundRect(35, 12, 58, 32, 7, SSD1306_WHITE);
+
+    // Ojos
+    display.fillCircle(50, 27, 4, SSD1306_WHITE);
+    display.fillCircle(78, 27, 4, SSD1306_WHITE);
+
+    // Boca
+    display.drawLine(54, 36, 74, 36, SSD1306_WHITE);
+
+    // Nombre
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(40, 49);
+    display.println(F("NIBO"));
 
     display.display();
-
 }
-
-// CHECK 2.3: Dibuja el cuadrado de autoprueba centrado e informa sus coordenadas.
-
-// Pregunta Guía: ¿Cómo compruebas que el cuadrado quedó centrado sin medir a ojo?
 
 inline void testDisplay() {
 
-    const int squareSize = 20;
-
-    int x = (OLED_WIDTH - squareSize) / 2;
-    int y = (OLED_HEIGHT - squareSize) / 2;
-
     display.clearDisplay();
-
-    display.drawRect(
-        x,
-        y,
-        squareSize,
-        squareSize,
-        SSD1306_WHITE
-    );
-
+    display.drawRect(54, 22, 20, 20, SSD1306_WHITE);
     display.display();
 
-    Serial.print(F("POST OLED: cuadrado centrado en X="));
-    Serial.print(x);
-
-    Serial.print(F(" Y="));
-    Serial.println(y);
-
+    Serial.println(F("POST OLED: prueba completada"));
 }
 
 #endif
