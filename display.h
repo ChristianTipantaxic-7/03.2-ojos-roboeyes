@@ -60,21 +60,6 @@ inline void showText(
 // PROBAR PANTALLA
 // =====================================================
 
-inline void testDisplay() {
 
-    display.clearDisplay();
-
-    display.setTextSize(1);
-    display.setTextColor(SSD1306_WHITE);
-    display.setCursor(20, 20);
-
-    display.println(F("NIBO"));
-    display.setCursor(20, 35);
-    display.println(F("OLED FUNCIONANDO"));
-
-    display.display();
-
-    Serial.println(F("[OLED] Prueba completada"));
-}
 
 #endif

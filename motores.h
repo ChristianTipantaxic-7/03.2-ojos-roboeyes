@@ -4,6 +4,10 @@
 #include <Arduino.h>
 #include "config_pwm.h"
 
+// Canales PWM para Arduino ESP32 2.0.17
+#define CANAL_PWM_IZQ 0
+#define CANAL_PWM_DER 1
+
 // =====================================================
 // ESTADOS DE MOVIMIENTO
 // =====================================================
@@ -38,30 +42,6 @@ int limitarVelocidad(int velocidad) {
 }
 
 // =====================================================
-// INICIALIZAR MOTORES
-// =====================================================
-
-void initMotors() {
-
-    pinMode(MOTOR_IZQ_IN1, OUTPUT);
-    pinMode(MOTOR_IZQ_IN2, OUTPUT);
-
-    pinMode(MOTOR_DER_IN1, OUTPUT);
-    pinMode(MOTOR_DER_IN2, OUTPUT);
-
-    ledcAttach(MOTOR_IZQ_PWM, PWM_FRECUENCIA, PWM_RESOLUCION);
-    ledcAttach(MOTOR_DER_PWM, PWM_FRECUENCIA, PWM_RESOLUCION);
-
-    detener();
-
-    Serial.println(F("[MOTORES] Inicializados"));
-
-    // Comenzar la secuencia avanzando
-    pasoMovimiento = -1;
-    tiempoInicioMovimiento = millis();
-}
-
-// =====================================================
 // CONTROL DEL MOTOR IZQUIERDO
 // =====================================================
 
@@ -72,7 +52,7 @@ void motorIzquierdo(int direccion, int velocidad) {
     digitalWrite(MOTOR_IZQ_IN1, direccion == 1);
     digitalWrite(MOTOR_IZQ_IN2, direccion == -1);
 
-    ledcWrite(MOTOR_IZQ_PWM, velocidad);
+    ledcWrite(CANAL_PWM_IZQ, velocidad);
 }
 
 // =====================================================
@@ -86,7 +66,7 @@ void motorDerecho(int direccion, int velocidad) {
     digitalWrite(MOTOR_DER_IN1, direccion == 1);
     digitalWrite(MOTOR_DER_IN2, direccion == -1);
 
-    ledcWrite(MOTOR_DER_PWM, velocidad);
+    ledcWrite(CANAL_PWM_DER, velocidad);
 }
 
 // =====================================================
@@ -94,41 +74,33 @@ void motorDerecho(int direccion, int velocidad) {
 // =====================================================
 
 void adelante(int velocidad = VELOCIDAD) {
-
     motorIzquierdo(1, velocidad);
     motorDerecho(1, velocidad);
-
     movimientoActual = MOV_ADELANTE;
 }
 
 void atras(int velocidad = VELOCIDAD) {
-
     motorIzquierdo(-1, velocidad);
     motorDerecho(-1, velocidad);
-
     movimientoActual = MOV_ATRAS;
 }
 
 void girarDerecha(int velocidad = VELOCIDAD) {
-
     motorIzquierdo(1, velocidad);
     motorDerecho(-1, velocidad);
-
     movimientoActual = MOV_DERECHA;
 }
 
 void girarIzquierda(int velocidad = VELOCIDAD) {
-
     motorIzquierdo(-1, velocidad);
     motorDerecho(1, velocidad);
-
     movimientoActual = MOV_IZQUIERDA;
 }
 
 void detener() {
 
-    ledcWrite(MOTOR_IZQ_PWM, 0);
-    ledcWrite(MOTOR_DER_PWM, 0);
+    ledcWrite(CANAL_PWM_IZQ, 0);
+    ledcWrite(CANAL_PWM_DER, 0);
 
     digitalWrite(MOTOR_IZQ_IN1, LOW);
     digitalWrite(MOTOR_IZQ_IN2, LOW);
@@ -137,6 +109,33 @@ void detener() {
     digitalWrite(MOTOR_DER_IN2, LOW);
 
     movimientoActual = MOV_PARE;
+}
+
+// =====================================================
+// INICIALIZAR MOTORES
+// =====================================================
+
+void initMotors() {
+
+    pinMode(MOTOR_IZQ_IN1, OUTPUT);
+    pinMode(MOTOR_IZQ_IN2, OUTPUT);
+
+    pinMode(MOTOR_DER_IN1, OUTPUT);
+    pinMode(MOTOR_DER_IN2, OUTPUT);
+
+    ledcSetup(CANAL_PWM_IZQ, PWM_FRECUENCIA, PWM_RESOLUCION);
+    ledcSetup(CANAL_PWM_DER, PWM_FRECUENCIA, PWM_RESOLUCION);
+
+    ledcAttachPin(MOTOR_IZQ_PWM, CANAL_PWM_IZQ);
+    ledcAttachPin(MOTOR_DER_PWM, CANAL_PWM_DER);
+
+    detener();
+
+    Serial.println(F("[MOTORES] Inicializados"));
+
+    // Comenzar la secuencia avanzando
+    pasoMovimiento = -1;
+    tiempoInicioMovimiento = millis();
 }
 
 // =====================================================
